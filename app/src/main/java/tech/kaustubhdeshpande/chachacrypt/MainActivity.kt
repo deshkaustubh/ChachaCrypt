@@ -3,45 +3,37 @@ package tech.kaustubhdeshpande.chachacrypt
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import tech.kaustubhdeshpande.chachacrypt.ui.theme.ChachaCryptTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import tech.kaustubhdeshpande.chachacrypt.ui.DecryptScreen
+import tech.kaustubhdeshpande.chachacrypt.ui.EncryptScreen
+import tech.kaustubhdeshpande.chachacrypt.viewmodel.DecryptViewModel
+import tech.kaustubhdeshpande.chachacrypt.viewmodel.EncryptViewModel
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            ChachaCryptTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            val nav = rememberNavController()
+            MaterialTheme(
+                colorScheme = if (false) darkColorScheme() else lightColorScheme()
+            ) {
+                NavHost(navController = nav, startDestination = "encrypt") {
+                    composable("encrypt") {
+                        val vm: EncryptViewModel = viewModel()
+                        EncryptScreen(viewModel = vm) { nav.navigate("decrypt") }
+                    }
+                    composable("decrypt") {
+                        val vm: DecryptViewModel = viewModel()
+                        DecryptScreen(viewModel = vm) { nav.navigate("encrypt") }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ChachaCryptTheme {
-        Greeting("Android")
     }
 }
